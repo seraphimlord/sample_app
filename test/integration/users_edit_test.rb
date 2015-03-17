@@ -49,5 +49,18 @@ class UsersEditTest < ActionDispatch::IntegrationTest
 		assert_equal @user.name,  name
 		assert_equal @user.email, email
 	end	
+
+	test "successful with friendly forwarding and logout and see will friendly forwarding again" do
+		get edit_user_path(@user)
+		log_in_as(@user)
+		assert_redirected_to edit_user_path(@user)
+		delete logout_path
+		assert_not is_logged_in?
+		assert_redirected_to root_url
+
+		log_in_as(@user)
+		assert_redirected_to @user
+
+	end	
 	
 end
