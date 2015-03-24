@@ -18,5 +18,24 @@ class UsersProfileTest < ActionDispatch::IntegrationTest
     @user.microposts.paginate(page: 1).each do |micropost|
       assert_match micropost.content, response.body
     end
+
+    # Test for Follower stats
+    follower_count = @user.followers.count
+    assert_select 'strong[id="followers"]', text: follower_count.to_s
+
+    # Test for following stats
+    assert_select 'strong[id="following"]', text: @user.following.count.to_s
+
+    get root_path
+    assert_template 'static_pages/home'
+
+    # Test for Follower stats
+    follower_count = @user.followers.count
+    assert 'strong[id="followers"]', { count: 0, text: follower_count.to_s }
+
+    # Test for following stats
+    assert 'strong[id="following"]', text: @user.following.count.to_s
+
   end
+
 end
